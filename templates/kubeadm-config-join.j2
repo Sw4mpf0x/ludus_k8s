@@ -1,21 +1,31 @@
 ---
 kind: JoinConfiguration
-{% if kube_version is version_compare('1.22.0', '<') %}
-apiVersion: kubeadm.k8s.io/v1beta2
-{% else %}
-apiVersion: kubeadm.k8s.io/v1beta3
-{% endif %}
+apiVersion: kubeadm.k8s.io/v1beta4
+caCertPath: /etc/kubernetes/pki/ca.crt
 nodeRegistration:
+  imagePullPolicy: IfNotPresent
+  imagePullSerial: true
   kubeletExtraArgs:
-    cgroup-driver: systemd
+    - name: cgroup-driver
+      value: systemd
 {% for key, value in kubelet_extra_args_dict.items() %}
-    {{key}}: {{value}}
+    - name: {{key}}
+      value: {{value}}
 {% endfor %}
 {% if kube_cri_runtime == "docker" %}
-  criSocket: "unix:///run/cri-dockerd.sock"
+  criSocket: unix:///run/cri-dockerd.sock
 {% endif %}
 discovery:
   bootstrapToken:
     token: "{{kube_token}}"
     apiServerEndpoint: {{kube_server}}:6443
     unsafeSkipCAVerification: true
+  tlsBootstrapToken: "{{kube_token}}"
+timeouts:
+  controlPlaneComponentHealthCheck: 4m0s
+  discovery: 5m0s
+  etcdAPICall: 2m0s
+  kubeletHealthCheck: 4m0s
+  kubernetesAPICall: 1m0s
+  tlsBootstrap: 5m0s
+  upgradeManifests: 5m0s
