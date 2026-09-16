@@ -19,6 +19,13 @@ Install via Ansible Galaxy (coming soon):
 ludus ansible collection add Sw4mpf0x.ludus_k8s
 ```
 
+Add and build a Ubuntu 22.04 template:
+
+```bash
+ludus source add ludus-source-bsl --templates ubuntu-22.04-x64-server-template
+ludus templates build
+```
+
 ## Ludus Usage
 
 ludus_k8s supports automating the following in your range yaml file:
@@ -36,7 +43,7 @@ ludus range deploy
 
 At a minimum, you will need to deploy two nodes, a front (control plane) and worker, when deploying a cluster with kubeadm (default behavior). Helm and kubectl are instaled on the front node, so any manifests or helm charts need to be specified on it in the range.yaml spec, not a worker node. Front pods by default will not deploy pods outside of the control plane, so they will wait until a worker node is availble and then deploy there. 
 
-### Basic Kuberentes Cluster
+### Basic Kubernetes Cluster
 
 A basic two node (control plane and worker) cluster with a couple of namespaces and a secret populated. Modifications, as with other ludus rangers, are made via `role_vars`. See examples below for different role variables that can be used to populate the cluster.
 
